@@ -4,7 +4,7 @@ import sys
 from geant4_pybind import *
 import math 
 
-class XXDetectorConstruction(G4VUserDetectorConstruction):
+class X5DetectorConstruction(G4VUserDetectorConstruction):
    """
    Simple model: a sphere with water in the box with air.
    """
@@ -106,7 +106,7 @@ if len(sys.argv) == 1:
 
 runManager = G4RunManagerFactory.CreateRunManager(G4RunManagerType.Serial)
 
-runManager.SetUserInitialization(XXDetectorConstruction())
+runManager.SetUserInitialization(X5DetectorConstruction())
 
 # Physics list
 physicsList = QBBC()
@@ -115,7 +115,7 @@ physicsList.SetVerboseLevel(1)
 runManager.SetUserInitialization(physicsList)
 
 # User action initialization
-#runManager.SetUserInitialization(XXActionInitialization())
+#runManager.SetUserInitialization(X5ActionInitialization())
 
 visManager = G4VisExecutive()
 # G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
