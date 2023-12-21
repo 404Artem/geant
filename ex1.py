@@ -21,22 +21,22 @@ class X1DetectorConstruction(G4VUserDetectorConstruction):
  
      envelop_mat = nist.FindOrBuildMaterial("G4_AIR")
  
-     sphere_rad = 7*cm
+     sphere_rad = 5*cm
      mat = nist.FindOrBuildMaterial("G4_WATER")
  
      checkOverlaps = True
  
-     world_x = 2.2*envelop_x
-     world_y = 2.2*envelop_y
-     world_z = 2.2*envelop_z
+     world_x = 1.2*envelop_x
+     world_y = 1.2*envelop_y
+     world_z = 1.2*envelop_z
 
      sWorld = G4Box("World", 0.5*world_x, 0.5*world_y, 0.5*world_z)
      lWorld = G4LogicalVolume(sWorld, envelop_mat, "World")
      pWorld = G4PVPlacement(None, G4ThreeVector(), lWorld, "World", None, False,0, checkOverlaps)
 
-     box_x = 1.8*envelop_x
-     box_y = 1.8*envelop_y
-     box_z = 1.8*envelop_z
+     box_x = 1.1*envelop_x
+     box_y = 1.1*envelop_y
+     box_z = 1.1*envelop_z
 
      sBox = G4Box("Box", 0.5*box_x, 0.5*box_y, 0.5*box_z)
      lBox = G4LogicalVolume(sBox, envelop_mat, "Box")
@@ -45,7 +45,7 @@ class X1DetectorConstruction(G4VUserDetectorConstruction):
      sSphere = G4Orb("Head", sphere_rad)
      lSphere = G4LogicalVolume(sSphere, mat, "Head")
      G4PVPlacement(None, G4ThreeVector(), lSphere,
-                   "Head", lWorld, True, 0, checkOverlaps)
+                   "Head", lBox, True, 0, checkOverlaps)
  
      self.fScoringVolume = lSphere
  
