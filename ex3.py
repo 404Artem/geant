@@ -21,9 +21,9 @@ class X3DetectorConstruction(G4VUserDetectorConstruction):
  
      envelop_mat = nist.FindOrBuildMaterial("G4_AIR")
  
-     sphere_rad = 7*cm
-     sOrb1 = 2*cm
-     sOrb2 = 4*cm
+     sphere_rad = 5*cm
+     sOrb1 = 1*cm
+     sOrb2 = 3*cm
 
      mat = nist.FindOrBuildMaterial("G4_WATER")
      mat1 = nist.FindOrBuildMaterial("G4_Fe")
@@ -31,17 +31,17 @@ class X3DetectorConstruction(G4VUserDetectorConstruction):
 #     mat3 = nist.FindOrBuildMaterial("G4_WATER")
      checkOverlaps = True
  
-     world_x = 2.2*envelop_x
-     world_y = 2.2*envelop_y
-     world_z = 2.2*envelop_z
+     world_x = 1.2*envelop_x
+     world_y = 1.2*envelop_y
+     world_z = 1.2*envelop_z
 
      sWorld = G4Box("World", 0.5*world_x, 0.5*world_y, 0.5*world_z)
      lWorld = G4LogicalVolume(sWorld, envelop_mat, "World")
      pWorld = G4PVPlacement(None, G4ThreeVector(), lWorld, "World", None, False,0, checkOverlaps)
 
-     box_x = 1.8*envelop_x
-     box_y = 1.8*envelop_y
-     box_z = 1.8*envelop_z
+     box_x = 1.1*envelop_x
+     box_y = 1.1*envelop_y
+     box_z = 1.1*envelop_z
 
      sBox = G4Box("Box", 0.5*box_x, 0.5*box_y, 0.5*box_z)
      lBox = G4LogicalVolume(sBox, envelop_mat, "Box")
@@ -55,9 +55,9 @@ class X3DetectorConstruction(G4VUserDetectorConstruction):
      lOrb1 = G4LogicalVolume(sOrb1, mat1, "Bullit")
      lOrb2 = G4LogicalVolume(sOrb2, mat2, "Coal")
 
-     G4PVPlacement(None, G4ThreeVector(), lSphere, "Head", lWorld, True, 0, checkOverlaps)
-     G4PVPlacement(None, G4ThreeVector(0, 0, -0.2*sphere_rad), lOrb1, "Bullit", lSphere, True, 0, checkOverlaps)
-     G4PVPlacement(None, G4ThreeVector(0, 0, 0.4*sphere_rad), lOrb2, "Coal", lSphere, True, 0, checkOverlaps)
+     G4PVPlacement(None, G4ThreeVector(), lSphere, "Head", lBox, True, 0, checkOverlaps)
+     G4PVPlacement(None, G4ThreeVector(0, 0, 0.3*sphere_rad), lOrb1, "Bullit", lSphere, True, 0, checkOverlaps)
+     G4PVPlacement(None, G4ThreeVector(0, 0, -0.3*sphere_rad), lOrb2, "Coal", lSphere, True, 0, checkOverlaps)
  
      self.fScoringVolume = lSphere
  
