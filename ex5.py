@@ -36,14 +36,16 @@ class X5DetectorConstruction(G4VUserDetectorConstruction):
      mat2 = nist.FindOrBuildMaterial("G4_WATER")
 
 #....Mozg
-     xSemiAxis1 = 2*cm
-     ySemiAxis1 = 2*cm
-     zSemiAxis1 = 2.5*cm
+     xSemiAxis1 = 1*cm
+     ySemiAxis1 = 1*cm
+     zSemiAxis1 = 1.6*cm
      mat3 = nist.FindOrBuildMaterial("G4_Benzene")
      #1.0 = (envelop_x/xSemiAxis1)**2 + (envelop_y/ySemiAxis1)**2 + (envelop_z/zSemiAxis1)**2
 
-     xSemiAxis2 = 2*cm
-     ySemiAxis2 = 2*cm
+     zTrans = G4Transform3D(G4RotationMatrix(), G4ThreeVector(-0.4*orb_rad, 0.15*orb_rad, 0))
+     
+     xSemiAxis2 = 2.6*cm
+     ySemiAxis2 = 3.2*cm
      zSemiAxis2 = 2.5*cm
      mat4 = nist.FindOrBuildMaterial("G4_Acetone")
      #1.0 = (envelop_x/xSemiAxis2)**2 + (envelop_y/ySemiAxis2)**2 + (envelop_z/zSemiAxis2)**2
@@ -75,20 +77,22 @@ class X5DetectorConstruction(G4VUserDetectorConstruction):
      sBrain1 = G4Ellipsoid("Brain1", xSemiAxis1, ySemiAxis1, zSemiAxis1, 0, 0)
      sBrain2 = G4Ellipsoid("Brain2", xSemiAxis2, ySemiAxis2, zSemiAxis2, 0, 0)
 
+     sCutOrb = G4SubtractionSolid("Mozg", sBrain2, sBrain1, zTrans)
+
 #....Logical volume creating
      lSphere = G4LogicalVolume(sSphere, mat1, "Skull")
      lOrb = G4LogicalVolume(sOrb, mat2, "Blood")
      lBrain1 = G4LogicalVolume(sBrain1, mat3, "Brain1")
-     lBrain2 = G4LogicalVolume(sBrain2, mat4, "Brain2")
+     lBrain2 = G4LogicalVolume(sCutOrb, mat4, "Brain2")
 
 #....Physical volume creating
      G4PVPlacement(None, G4ThreeVector(), lSphere,
-                   "Skull", lWorld, True, 0, checkOverlaps)
+                   "Skull", lBox, True, 0, checkOverlaps)
      G4PVPlacement(None, G4ThreeVector(), lOrb,
                    "Blood", lSphere, True, 0, checkOverlaps)
-     G4PVPlacement(None, G4ThreeVector(-0.3*orb_rad, 0.15*orb_rad, 0), lBrain1,
+     G4PVPlacement(None, G4ThreeVector(-0.2*orb_rad, 0.15*orb_rad, 0), lBrain1,
                    "Brain1", lOrb, True, 0, checkOverlaps)
-     G4PVPlacement(None, G4ThreeVector(0.3*orb_rad, 0.15*orb_rad, 0), lBrain2, 
+     G4PVPlacement(None, G4ThreeVector(0.2*orb_rad, 0*orb_rad, 0), lBrain2, 
                    "Brain2", lOrb, True, 0, checkOverlaps)
 
      self.fScoringVolume = lSphere
