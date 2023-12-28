@@ -22,13 +22,13 @@ class X2DetectorConstruction(G4VUserDetectorConstruction):
      envelop_mat = nist.FindOrBuildMaterial("G4_AIR")
  
      sphere_rad = 5*cm
-     sOrb1 = 1*cm
-     sOrb2 = 3*cm
+     orb1_rad = 1*cm
+     orb2_rad = 3*cm
 
      mat = nist.FindOrBuildMaterial("G4_WATER")
      mat1 = nist.FindOrBuildMaterial("G4_Fe")
      mat2 = nist.FindOrBuildMaterial("G4_C")
-#     mat3 = nist.FindOrBuildMaterial("G4_WATER")
+
      checkOverlaps = True
  
      world_x = 1.2*envelop_x
@@ -48,8 +48,8 @@ class X2DetectorConstruction(G4VUserDetectorConstruction):
      G4PVPlacement(None, G4ThreeVector(), lBox, "Box", lWorld, False, 0, checkOverlaps)
  
      sSphere = G4Orb("Head", sphere_rad)
-     sOrb1 = G4Orb("Bullit", sOrb1)
-     sOrb2 = G4Orb("Coal", sOrb2)
+     sOrb1 = G4Orb("Bullit", orb1_rad)
+     sOrb2 = G4Orb("Coal", orb2_rad)
 
      lSphere = G4LogicalVolume(sSphere, mat, "Head")
      lOrb1 = G4LogicalVolume(sOrb1, mat1, "Bullit")
