@@ -16,9 +16,9 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
    def Construct(self):
      nist = G4NistManager.Instance()
  
-     envelop_x = 10*cm
-     envelop_y = 10*cm
-     envelop_z = 10*cm
+     envelop_x = 30*cm
+     envelop_y = 30*cm
+     envelop_z = 30*cm
  
      envelop_mat = nist.FindOrBuildMaterial("G4_AIR")   
      mat_leg = nist.FindOrBuildMaterial("G4_TISSUE_SOFT_ICRP")
@@ -60,6 +60,46 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
  
      return pWorld
 
+#---------------------------------------------------------------
+class ExamPrimaryGeneratorAction(G4VUserPrimaryGeneratorAction):
+   def __init__(self):
+     super().__init__()
+     self.fEnvelopeBox = None
+     self.fParticleGun = G4ParticleGun(1)
+ 
+     particleTable = G4ParticleTable.GetParticleTable()
+     particle = particleTable.FindParticle("gamma")
+     self.fParticleGun.SetParticleDefinition(particle)
+     self.fParticleGun.SetParticleMomentumDirection(G4ThreeVector(1, 1, 1))
+     self.fParticleGun.SetParticleEnergy(1*MeV)
+ 
+   def GeneratePrimaries(self, anEvent):
+     envSizeX = 0
+     envSizeY = 0
+     envSizeZ = 0
+
+     if self.fEnvelopeBox == None:
+       envLV = G4LogicalVolumeStore.GetInstance().GetVolume("Box")
+       if envLV != None:
+         self.fEnvelopeBox = envLV.GetSolid()
+ 
+       if self.fEnvelopeBox != None:
+         envSizeX = self.fEnvelopeBox.GetXHalfLength()*2
+         envSizeY = self.fEnvelopeBox.GetYHalfLength()*2
+         envSizeZ = self.fEnvelopeBox.GetZHalfLength()*2
+       else:
+         msg = "Envelope volume of box shape not found.\n"
+         msg += "Perhaps you have changed geometry.\n"
+         msg += "The gun will be place at the center."
+         G4Exception("ExamPrimaryGeneratorAction::GeneratePrimaries()",
+                     "MyCode0002", G4ExceptionSeverity.JustWarning, msg)
+
+       x0 = -0.5 * envSizeX
+       y0 = -0.5 * envSizeY
+       z0 = -0.5 * envSizeZ
+ 
+       self.fParticleGun.SetParticlePosition(G4ThreeVector(x0, y0, z0))
+       self.fParticleGun.GeneratePrimaryVertex(anEvent)
 
 #-----------------------------------------------------------
 class ExamActionInitialization(G4VUserActionInitialization):
@@ -80,49 +120,6 @@ class ExamActionInitialization(G4VUserActionInitialization):
     self.SetUserAction(eventAction)
 
     self.SetUserAction(ExamSteppingAction(eventAction))
-
-
-#---------------------------------------------------------------
-class ExamPrimaryGeneratorAction(G4VUserPrimaryGeneratorAction):
-   def __init__(self):
-     super().__init__()
-     self.fEnvelopeBox = None
-     self.fParticleGun = G4ParticleGun(1)
- 
-     particleTable = G4ParticleTable.GetParticleTable()
-     particle = particleTable.FindParticle("gamma")
-     self.fParticleGun.SetParticleDefinition(particle)
-     self.fParticleGun.SetParticleMomentumDirection(G4ThreeVector(0, 1, 1))
-     self.fParticleGun.SetParticleEnergy(1*MeV)
- 
-   def GeneratePrimaries(self, anEvent):
-     envSizeX = -1
-     envSizeY = -1
-     envSizeZ = -1
- 
-     if self.fEnvelopeBox == None:
-       envLV = G4LogicalVolumeStore.GetInstance().GetVolume("Box")
-       if envLV != None:
-         self.fEnvelopeBox = envLV.GetSolid()
- 
-       if self.fEnvelopeBox != None:
-         envSizeX = self.fEnvelopeBox.GetXHalfLength()*2
-         envSizeY = self.fEnvelopeBox.GetYHalfLength()*2
-         envSizeZ = self.fEnvelopeBox.GetZHalfLength()*2
-       else:
-         msg = "Envelope volume of box shape not found.\n"
-         msg += "Perhaps you have changed geometry.\n"
-         msg += "The gun will be place at the center."
-         G4Exception("ExamPrimaryGeneratorAction::GeneratePrimaries()",
-                     "MyCode0002", G4ExceptionSeverity.JustWarning, msg)
- 
-       size = 0.8
-       x0 = size * envSizeX * (G4UniformRand() - 0.5)
-       y0 = size * envSizeY * (G4UniformRand() - 0.5)
-       z0 = -0.5 * envSizeZ
- 
-       self.fParticleGun.SetParticlePosition(G4ThreeVector(x0, y0, z0))
-       self.fParticleGun.GeneratePrimaryVertex(anEvent)
 
 
 #------------------------------------------------------------
