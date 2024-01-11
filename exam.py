@@ -48,7 +48,7 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
      
      sLeg = G4Tubs("Leg", 0, 0.25*box_y, 0.5*box_z, 2*math.pi, 2*math.pi)
      lLeg = G4LogicalVolume(sLeg, mat_leg, "Leg")
-     G4PVPlacement(None, G4ThreeVector(), lLeg, "Leg", lWorld, True, 0, checkOverlaps)
+     G4PVPlacement(None, G4ThreeVector(), lLeg, "Leg", lBox, True, 0, checkOverlaps)
 
      sProsthesis = G4Tubs("Prosthesis", 0, 0.12*envelop_y, 0.7*envelop_z, 2*math.pi, 2*math.pi)
      lProsthesis = G4LogicalVolume(sProsthesis, mat_p, "Prosthesis")
