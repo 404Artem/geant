@@ -94,9 +94,9 @@ class ExamPrimaryGeneratorAction(G4VUserPrimaryGeneratorAction):
          G4Exception("ExamPrimaryGeneratorAction::GeneratePrimaries()",
                      "MyCode0002", G4ExceptionSeverity.JustWarning, msg)
 
-       x0 = -0.5 * envSizeX
+       x0 = 0
        y0 = -0.5 * envSizeY
-       z0 = 0
+       z0 = -0.5 * envSizeZ
  
        self.fParticleGun.SetParticlePosition(G4ThreeVector(x0, y0, z0))
        self.fParticleGun.GeneratePrimaryVertex(anEvent)
