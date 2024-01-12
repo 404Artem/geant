@@ -26,36 +26,37 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
 
      checkOverlaps = True
  
-     world_x = 1.5*envelop_x
-     world_y = 1.5*envelop_y
-     world_z = 1.5*envelop_z
+     world_x = envelop_x
+     world_y = envelop_y
+     world_z = envelop_z
  
-     sWorld = G4Box("World", 0.5*world_x, 0.5*world_y,0.5*world_z)
+     sWorld = G4Box("World", world_x, world_y, world_z)
      lWorld = G4LogicalVolume(sWorld, envelop_mat, "World")
      pWorld = G4PVPlacement(None, G4ThreeVector(),
                             lWorld, "World", None, False,
                             0, checkOverlaps)
 
-     box_x = 1.5*envelop_x
-     box_y = 1.5*envelop_y
-     box_z = 1.5*envelop_z
+     box_x = envelop_x
+     box_y = envelop_y
+     box_z = envelop_z
 
-     zTrans = G4Transform3D(G4RotationMatrix(), G4ThreeVector(0.1*envelop_x, 0, 0.05*envelop_z)) 
+     zTrans = G4Transform3D(G4RotationMatrix(), G4ThreeVector(0.03*box_x, 0.13*box_y, 1.6*box_z)) 
 
-     sBox = G4Box("Box", 0.4*box_x, 0.4*box_y, 0.5*box_z)
+     sBox = G4Box("Box", 0.8*box_x, 0.6*box_y, 0.8*box_z)
      lBox = G4LogicalVolume(sBox, envelop_mat, "Box")
      G4PVPlacement(None, G4ThreeVector(), lBox, "Box", lWorld, False, 0, checkOverlaps)     
      
-     sLeg = G4Tubs("Leg", 0, 0.35*box_y, 0.49*box_z, 2*math.pi, 2*math.pi)
+     sLeg = G4Tubs("Leg", 0, 0.5*box_y, 0.8*box_z, 2*math.pi, 2*math.pi)
      lLeg = G4LogicalVolume(sLeg, mat_leg, "Leg")
      G4PVPlacement(None, G4ThreeVector(), lLeg, "Leg", lBox, True, 0, checkOverlaps)
 
-     sProsthesis = G4Tubs("Prosthesis", 0, 0.1*box_y, 0.49*box_z, 2*math.pi, 2*math.pi)
-     lProsthesis = G4LogicalVolume(sProsthesis, mat_p, "Prosthesis")
+     sProsthesis = G4Tubs("Prosthesis", 0, 0.1*box_y, 0.8*box_z, 2*math.pi, 2*math.pi)
+     sCut = G4SubtractionSolid("Leg", sProsthesis, sLeg, zTrans)
+
+     lProsthesis = G4LogicalVolume(sCut, mat_p, "Prosthesis")
      G4PVPlacement(None, G4ThreeVector(0.03*box_x, 0.13*box_y, 0), lProsthesis, "Prosthesis", lLeg, True, 0, checkOverlaps)
      
-     sCut = G4SubtractionSolid("Leg", sLeg, sProsthesis, zTrans)
-
+  
      self.fScoringVolume = lLeg
  
      return pWorld
@@ -97,7 +98,8 @@ class ExamPrimaryGeneratorAction(G4VUserPrimaryGeneratorAction):
        x0 = 0
        y0 = -0.5 * envSizeY
        z0 = -0.5 * envSizeZ
- 
+
+       self.fParticleGun.SetParticleMomentumDirection(G4ThreeVector(-x0, -y0, -z0))
        self.fParticleGun.SetParticlePosition(G4ThreeVector(x0, y0, z0))
        self.fParticleGun.GeneratePrimaryVertex(anEvent)
 
