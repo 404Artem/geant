@@ -54,7 +54,7 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
      lProsthesis = G4LogicalVolume(sProsthesis, mat_p, "Prosthesis")
      G4PVPlacement(None, G4ThreeVector(0.03*box_x, 0.13*box_y, 0), lProsthesis, "Prosthesis", lLeg, True, 0, checkOverlaps)
      
-     sCut = G4SubtractionSolid("Noga", sLeg, sProsthesis, zTrans)
+     sCut = G4SubtractionSolid("Leg", sLeg, sProsthesis, zTrans)
 
      self.fScoringVolume = lLeg
  
