@@ -24,8 +24,6 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
      mat_leg = nist.FindOrBuildMaterial("G4_TISSUE_SOFT_ICRP")
      mat_p = nist.FindOrBuildMaterial("G4_Ti")
 
-     zTrans = G4Transform3D(G4RotationMatrix(), G4ThreeVector(0.15*envelop_x, 0, 0.07*envelop_z))
- 
      checkOverlaps = True
  
      world_x = 1.5*envelop_x
@@ -42,20 +40,22 @@ class ExamDetectorConstruction(G4VUserDetectorConstruction):
      box_y = 1.5*envelop_y
      box_z = 1.5*envelop_z
 
-     sBox = G4Box("Box", 0.5*box_x, 0.5*box_y, 0.5*box_z)
+     zTrans = G4Transform3D(G4RotationMatrix(), G4ThreeVector(0.1*envelop_x, 0, 0.05*envelop_z)) 
+
+     sBox = G4Box("Box", 0.4*box_x, 0.4*box_y, 0.5*box_z)
      lBox = G4LogicalVolume(sBox, envelop_mat, "Box")
      G4PVPlacement(None, G4ThreeVector(), lBox, "Box", lWorld, False, 0, checkOverlaps)     
      
-     sLeg = G4Tubs("Leg", 0, 0.25*box_y, 0.5*box_z, 2*math.pi, 2*math.pi)
+     sLeg = G4Tubs("Leg", 0, 0.35*box_y, 0.49*box_z, 2*math.pi, 2*math.pi)
      lLeg = G4LogicalVolume(sLeg, mat_leg, "Leg")
      G4PVPlacement(None, G4ThreeVector(), lLeg, "Leg", lBox, True, 0, checkOverlaps)
 
-     sProsthesis = G4Tubs("Prosthesis", 0, 0.12*envelop_y, 0.7*envelop_z, 2*math.pi, 2*math.pi)
+     sProsthesis = G4Tubs("Prosthesis", 0, 0.1*box_y, 0.49*box_z, 2*math.pi, 2*math.pi)
      lProsthesis = G4LogicalVolume(sProsthesis, mat_p, "Prosthesis")
-     G4PVPlacement(None, G4ThreeVector(0.15*envelop_x, 0.07*envelop_y, 0), lProsthesis, "Prosthesis", lLeg, True, 0, checkOverlaps)
+     G4PVPlacement(None, G4ThreeVector(0.03*box_x, 0.13*box_y, 0), lProsthesis, "Prosthesis", lLeg, True, 0, checkOverlaps)
      
-     sCut = G4SubtractionSolid("Prosthesis", sProsthesis, sLeg, zTrans)
- 
+     sCut = G4SubtractionSolid("Noga", sLeg, sProsthesis, zTrans)
+
      self.fScoringVolume = lLeg
  
      return pWorld
@@ -70,7 +70,7 @@ class ExamPrimaryGeneratorAction(G4VUserPrimaryGeneratorAction):
      particleTable = G4ParticleTable.GetParticleTable()
      particle = particleTable.FindParticle("gamma")
      self.fParticleGun.SetParticleDefinition(particle)
-     self.fParticleGun.SetParticleMomentumDirection(G4ThreeVector(1, 1, 0))
+     self.fParticleGun.SetParticleMomentumDirection(G4ThreeVector(0, 1, 1))
      self.fParticleGun.SetParticleEnergy(1*MeV)
  
    def GeneratePrimaries(self, anEvent):
